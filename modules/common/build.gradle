@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+}
+
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+
+    implementation "software.amazon.awssdk:s3:${awsSdkVersion}"
+    implementation "software.amazon.awssdk:s3-transfer-manager:${awsSdkVersion}"
+    implementation "software.amazon.awssdk:netty-nio-client:${awsSdkVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-data-r2dbc"
+    runtimeOnly "org.postgresql:postgresql"
+    runtimeOnly "org.postgresql:r2dbc-postgresql"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "io.projectreactor:reactor-test"
+    testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation "com.adobe.testing:s3mock-testcontainers:${s3mockVersion}"
+
+    testImplementation "org.testcontainers:postgresql"
+    testImplementation "org.testcontainers:r2dbc"
+    testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "org.testcontainers:nginx"
+
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+
+    testAnnotationProcessor "org.projectlombok:lombok"
+    testCompileOnly "org.projectlombok:lombok"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

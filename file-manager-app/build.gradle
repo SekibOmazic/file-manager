@@ -1,0 +1,53 @@
+plugins {
+    // Apply the plugins. Versions are inherited from the root project.
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    implementation project(':modules:file-metadata')
+    implementation project(':modules:file-storage')
+    implementation project(':modules:archiving')
+
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+
+    implementation "software.amazon.awssdk:s3:${awsSdkVersion}"
+    implementation "software.amazon.awssdk:s3-transfer-manager:${awsSdkVersion}"
+    implementation "software.amazon.awssdk:netty-nio-client:${awsSdkVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-data-r2dbc"
+    runtimeOnly "org.postgresql:postgresql"
+    runtimeOnly "org.postgresql:r2dbc-postgresql"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "io.projectreactor:reactor-test"
+    testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation "com.adobe.testing:s3mock-testcontainers:${s3mockVersion}"
+
+    testImplementation "org.testcontainers:postgresql"
+    testImplementation "org.testcontainers:r2dbc"
+    testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "org.testcontainers:nginx"
+
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+
+    testAnnotationProcessor "org.projectlombok:lombok"
+    testCompileOnly "org.projectlombok:lombok"
+
+
+    // This makes the testFixtures sources/resources from file-metadata
+    // available on the test classpath of file-manager-app.
+    testImplementation testFixtures(project(':modules:file-metadata'))
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

@@ -1,0 +1,55 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.0-M1' apply false
+    id 'io.spring.dependency-management' version '1.1.7' apply false
+}
+
+// 'allprojects' configures the root project AND all sub-modules
+allprojects {
+    group = 'io.filemanager'
+    version = '0.0.1-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+        maven { url = 'https://repo.spring.io/milestone' }
+        maven { url = 'https://repo.spring.io/snapshot' }
+    }
+}
+
+// The 'subprojects' block configures settings that are inherited by all modules,
+// including 'filez-application' and 'scanner-simulator'.
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+
+        sourceCompatibility = JavaVersion.VERSION_21
+    }
+
+    // This block ensures that all modules use the same dependency versions,
+    // which are managed by the Spring Boot BOM (Bill of Materials).
+    dependencyManagement {
+        imports {
+            // Use the fully qualified name for the Spring Boot BOM coordinates
+            mavenBom SpringBootPlugin.BOM_COORDINATES
+        }
+    }
+
+    // This ensures that the test tasks in each submodule use JUnit 5
+    tasks.withType(Test) {
+        useJUnitPlatform()
+    }
+
+}
+
+// Use 'ext' (extra properties) to define shared versions available to all sub-modules
+ext {
+    awsSdkVersion = '2.32.14'
+    s3mockVersion = '4.7.0'
+}

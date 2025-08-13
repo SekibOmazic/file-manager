@@ -1,0 +1,15 @@
+pluginManagement {
+    repositories {
+        maven { url = 'https://repo.spring.io/milestone' }
+        maven { url = 'https://repo.spring.io/snapshot' }
+        gradlePluginPortal()
+    }
+}
+rootProject.name = 'file-manager'
+
+include 'file-manager-app'
+include 'modules:common'
+include 'modules:file-metadata'
+include 'modules:file-storage'
+include 'modules:archiving'
+include 'scanner-simulator'

@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'java-test-fixtures'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+
+    implementation "org.springframework.boot:spring-boot-starter-data-r2dbc"
+    runtimeOnly "org.postgresql:postgresql"
+    runtimeOnly "org.postgresql:r2dbc-postgresql"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "io.projectreactor:reactor-test"
+    testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation "org.testcontainers:postgresql"
+    testImplementation "org.testcontainers:r2dbc"
+    testImplementation "org.testcontainers:junit-jupiter"
+
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+// This configuration ensures that when we run tests within this module,
+// the test classpath includes the resources from our testFixtures source set.
+tasks.named('test', Test) {
+    // Get the output of the testFixtures source set (classes and resources)
+    def testFixturesSourceSet = sourceSets.findByName('testFixtures')
+    if (testFixturesSourceSet) {
+        // Add it to the classpath for the test task
+        classpath += testFixturesSourceSet.output
+    }
+}

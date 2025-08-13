@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    implementation project(':modules:file-metadata')
+    implementation project(':modules:common')
+
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+
+    implementation platform("software.amazon.awssdk:bom:${awsSdkVersion}")
+    implementation "software.amazon.awssdk:s3"
+    implementation "software.amazon.awssdk:s3-transfer-manager"
+    implementation "software.amazon.awssdk:netty-nio-client"
+
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "io.projectreactor:reactor-test"
+    testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation "com.adobe.testing:s3mock-testcontainers:${s3mockVersion}"
+    testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "org.testcontainers:nginx"
+
+    // ADDED TO GET INTEGRATION TESTS WORKING
+    testImplementation "org.testcontainers:postgresql"
+
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

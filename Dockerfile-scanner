@@ -1,0 +1,33 @@
+# Stage 1: The Build Stage
+# Use an official JDK image. We will use the Gradle Wrapper, so we don't need the Gradle image.
+FROM eclipse-temurin:21-jdk AS builder
+
+WORKDIR /app
+
+# 1. Copy the Gradle Wrapper files first.
+# This layer will be cached by Docker, speeding up subsequent builds.
+COPY gradlew .
+COPY gradle ./gradle
+
+# 2. Copy the settings.gradle file. Gradle needs this to understand it's part of a project.
+COPY settings.gradle .
+# Optional but good practice: copy the root build.gradle for dependency versions
+COPY build.gradle .
+
+# 3. Copy ONLY the source code for the scanner-simulator module.
+COPY scanner-simulator ./scanner-simulator
+
+# 4. Run the bootJar task using the Gradle Wrapper.
+# This ensures the correct Gradle version is used.
+RUN ./gradlew :scanner-simulator:bootJar --no-daemon
+
+# ---
+
+# Stage 2: The Final Image Stage
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+
+COPY --from=builder /app/scanner-simulator/build/libs/*.jar app.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","app.jar"]
