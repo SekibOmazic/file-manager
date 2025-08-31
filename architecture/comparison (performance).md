@@ -10,7 +10,7 @@ The reason for the performance difference comes down to how each solution uses t
 
 *   **`StreamingArchiveService` (Hybrid):** This solution uses the `Schedulers.boundedElastic` pool. Think of this as a pool of specialized "blocking workers." For **every concurrent zip request** that comes in, one worker thread is checked out from this pool and is dedicated to that single request until it's complete.
 
-*   **`CustomArchiveService` (Pure Reactive):** This solution does **not** use a blocking pool. It runs entirely on the main, non-blocking event-loop threads (e.g., Netty threads managed by WebFlux). Think of these threads as highly efficient multitaskers. A single thread can juggle the data processing for hundreds of different requests simultaneously, processing a small chunk for request A, then a chunk for request B, then a chunk for A again, and so on. It never dedicates a full thread to a single request.
+*   **`ArchiveService` (Pure Reactive):** This solution does **not** use a blocking pool. It runs entirely on the main, non-blocking event-loop threads (e.g., Netty threads managed by WebFlux). Think of these threads as highly efficient multitaskers. A single thread can juggle the data processing for hundreds of different requests simultaneously, processing a small chunk for request A, then a chunk for request B, then a chunk for A again, and so on. It never dedicates a full thread to a single request.
 
 ---
 
